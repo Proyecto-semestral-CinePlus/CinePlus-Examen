@@ -2,6 +2,7 @@ package com.example.cineplus.services;
 
 import com.example.cineplus.model.Usuario;
 import com.example.cineplus.repository.UsuarioRepository;
+import com.example.cineplus.util.RecursoNoEncontradoException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
@@ -36,40 +37,35 @@ public class UsuarioService implements UserDetailsService {
                 .build();
     }
 
-    // metodo para obtener todos los usuarios
     public List<Usuario> getUsuarios() {
         return usuarioRepository.findAll();
     }
 
-    // metodo para obtener un usuario por id
     public Usuario getUsuarioId(int id) {
         return usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado con id: " + id));
     }
 
-    // metodo para crear un usuario (encriptando la password)
     public Usuario saveUsuario(Usuario usuario) {
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         return usuarioRepository.save(usuario);
     }
 
-    // metodo para actualizar un usuario
     public Usuario updateUsuario(int id, Usuario usuarioNuevo) {
-        Usuario usuarioExistente = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Usuario existente = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado con id: " + id));
 
-        usuarioExistente.setNombre(usuarioNuevo.getNombre());
-        usuarioExistente.setApellido(usuarioNuevo.getApellido());
-        usuarioExistente.setCorreo(usuarioNuevo.getCorreo());
-        usuarioExistente.setPassword(passwordEncoder.encode(usuarioNuevo.getPassword()));
+        existente.setNombre(usuarioNuevo.getNombre());
+        existente.setApellido(usuarioNuevo.getApellido());
+        existente.setCorreo(usuarioNuevo.getCorreo());
+        existente.setPassword(passwordEncoder.encode(usuarioNuevo.getPassword()));
 
-        return usuarioRepository.save(usuarioExistente);
+        return usuarioRepository.save(existente);
     }
 
-    // metodo para eliminar un usuario
     public void deleteUsuario(int id) {
         if (!usuarioRepository.existsById(id)) {
-            throw new RuntimeException("Usuario no encontrado");
+            throw new RecursoNoEncontradoException("Usuario no encontrado con id: " + id);
         }
         usuarioRepository.deleteById(id);
     }
