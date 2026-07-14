@@ -194,6 +194,15 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.12</version>
+				<configuration>
+
+					<excludes>
+						<exclude>com/example/cineplus/security/**</exclude>
+						<exclude>com/example/cineplus/webclient/**</exclude>
+						<exclude>com/example/cineplus/model/**</exclude>
+						<exclude>com/example/cineplus/CineplusApplication.class</exclude>
+					</excludes>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
